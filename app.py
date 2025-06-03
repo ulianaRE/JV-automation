@@ -2,36 +2,77 @@ import streamlit as st
 import subprocess
 import os
 import json
-import tempfile
+from pathlib import Path
 
-st.title("JV Agreement Filler")
-st.write("Upload your input files and click below to generate the filled Word document.")
+st.title("📄 JV Agreement Automation")
 
-uploaded_docx = st.file_uploader("Upload DOCX file", type="docx")
-uploaded_xlsx = st.file_uploader("Upload XLSX file", type="xlsx")
+# Upload inputs
+docx_file = st.file_uploader("Upload the Word document (.docx)", type=["docx"])
+xlsx_file = st.file_uploader("Upload the Excel spreadsheet (.xlsx)", type=["xlsx"])
 
-if uploaded_docx and uploaded_xlsx:
-    with tempfile.TemporaryDirectory() as tmpdir:
-        docx_path = os.path.join(tmpdir, "JV Agreement - 1 PML.docx")
-        xlsx_path = os.path.join(tmpdir, "input.xlsx")
+if docx_file and xlsx_file:
+    # Save uploaded files locally
+    docx_path = Path("JV Agreement - 1 PML.docx")
+    xlsx_path = Path("Project Info Sheet for AI.xlsx")
+    json_path = Path("extracted_values.json")
 
-        with open(docx_path, "wb") as f:
-            f.write(uploaded_docx.read())
+    with open(docx_path, "wb") as f:
+        f.write(docx_file.read())
+    with open(xlsx_path, "wb") as f:
+        f.write(xlsx_file.read())
 
-        with open(xlsx_path, "wb") as f:
-            f.write(uploaded_xlsx.read())
+    st.write("✅ Files uploaded successfully.")
 
-        # Extract values to JSON
-        extract_script = "extract_values_from_spreadsheet_to_json.py"
-        subprocess.run(["python3", extract_script, xlsx_path], cwd=".", check=True)
+    # Run the extraction script
+    extract_script = "extract_values_from_spreadsheet_to_json.py"
+    st.write("🔄 Extracting data from spreadsheet...")
 
-        # Run all fill scripts
-        for script in sorted(f for f in os.listdir(".") if f.startswith("fill_docx_v") and f.endswith(".py")):
-            subprocess.run(["python3", script], cwd=".", check=True)
+    try:
+        result = subprocess.run(
+            ["python3", extract_script, str(xlsx_path)],
+            cwd=".",
+            check=True,
+            capture_output=True,
+            text=True
+        )
+        st.success("✅ Data extracted from Excel and written to JSON.")
+        st.code(result.stdout, language="bash")
+    except subprocess.CalledProcessError as e:
+        st.error("❌ Error running spreadsheet extraction script.")
+        st.code(e.stderr or "No stderr output", language="bash")
+        st.stop()
 
-        filled_docx_path = "JV Agreement - 1 PML - filled v99.docx"
-        if os.path.exists(filled_docx_path):
-            with open(filled_docx_path, "rb") as f:
-                st.download_button("Download Filled Document", f, file_name="JV Agreement - 1 PML - filled.docx")
-        else:
-            st.error("Something went wrong — output file not found.")
+    # Run all filling scripts
+    st.write("🛠️ Running document filler scripts...")
+
+    fill_scripts = sorted(Path(".").glob("fill_*.py"))
+    for script in fill_scripts:
+        if script.name == "app.py":
+            continue
+        st.write(f"▶️ Running `{script.name}`...")
+        try:
+            result = subprocess.run(
+                ["python3", script.name],
+                cwd=".",
+                check=True,
+                capture_output=True,
+                text=True
+            )
+            st.code(result.stdout, language="bash")
+        except subprocess.CalledProcessError as e:
+            st.error(f"❌ Error in `{script.name}`")
+            st.code(e.stderr or "No stderr output", language="bash")
+
+    # Offer final docx for download
+    filled_versions = sorted(Path(".").glob("*filled v*.docx"), key=os.path.getmtime, reverse=True)
+    if filled_versions:
+        latest_file = filled_versions[0]
+        with open(latest_file, "rb") as f:
+            st.download_button(
+                label=f"📥 Download: {latest_file.name}",
+                data=f,
+                file_name=latest_file.name,
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            )
+    else:
+        st.warning("⚠️ No filled document found to download.")
