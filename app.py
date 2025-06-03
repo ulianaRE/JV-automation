@@ -24,7 +24,7 @@ if docx_file and xlsx_file:
     st.write("✅ Files uploaded successfully.")
 
     # Run the extraction script
-    extract_script = "extract_values_from_spreadsheet_to_json.py"
+    extract_script = "extract_values_from_1pml_spreadsheet_to_json.py"
     st.write("🔄 Extracting data from spreadsheet...")
 
     try:
