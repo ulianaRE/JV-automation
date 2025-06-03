@@ -1,78 +1,51 @@
 import streamlit as st
 import subprocess
+import sys
 import os
-import json
-from pathlib import Path
+import shutil
 
-st.title("📄 JV Agreement Automation")
+# Setup
+st.set_page_config(page_title="JV Agreement Automation Tool", page_icon="🧾")
+st.title("🧾 JV Agreement Automation Tool")
+st.write("Upload your Excel and Word template files to generate a custom JV Agreement.")
 
-# Upload inputs
-docx_file = st.file_uploader("Upload the Word document (.docx)", type=["docx"])
-xlsx_file = st.file_uploader("Upload the Excel spreadsheet (.xlsx)", type=["xlsx"])
+# File uploader
+uploaded_excel = st.file_uploader("Upload Excel (.xlsx)", type="xlsx")
+uploaded_docx = st.file_uploader("Upload JV Agreement Template (.docx)", type="docx")
 
-if docx_file and xlsx_file:
-    # Save uploaded files locally
-    docx_path = Path("JV Agreement - 1 PML.docx")
-    xlsx_path = Path("Project Info Sheet for AI.xlsx")
-    json_path = Path("extracted_values.json")
+TEMP_DIR = "temp"
+OUTPUT_DOC = os.path.join(TEMP_DIR, "filled_agreement.docx")
+os.makedirs(TEMP_DIR, exist_ok=True)
 
+if uploaded_excel and uploaded_docx:
+    excel_path = os.path.join(TEMP_DIR, uploaded_excel.name)
+    docx_path = os.path.join(TEMP_DIR, uploaded_docx.name)
+
+    # Save uploaded files
+    with open(excel_path, "wb") as f:
+        f.write(uploaded_excel.getbuffer())
     with open(docx_path, "wb") as f:
-        f.write(docx_file.read())
-    with open(xlsx_path, "wb") as f:
-        f.write(xlsx_file.read())
+        f.write(uploaded_docx.getbuffer())
 
-    st.write("✅ Files uploaded successfully.")
+    st.success("✅ Files uploaded!")
 
-    # Run the extraction script
-    extract_script = "extract_values.py"
-    st.write("🔄 Extracting data from spreadsheet...")
-
-    try:
-        result = subprocess.run(
-            ["python3", extract_script, str(xlsx_path)],
-            cwd=".",
-            check=True,
-            capture_output=True,
-            text=True
-        )
-        st.success("✅ Data extracted from Excel and written to JSON.")
-        st.code(result.stdout, language="bash")
-    except subprocess.CalledProcessError as e:
-        st.error("❌ Error running spreadsheet extraction script.")
-        st.code(e.stderr or "No stderr output", language="bash")
-        st.stop()
-
-    # Run all filling scripts
-    st.write("🛠️ Running document filler scripts...")
-
-    fill_scripts = sorted(Path(".").glob("fill_*.py"))
-    for script in fill_scripts:
-        if script.name == "app.py":
-            continue
-        st.write(f"▶️ Running `{script.name}`...")
+    if st.button("Generate JV Agreement"):
         try:
-            result = subprocess.run(
-                ["python3", script.name],
-                cwd=".",
-                check=True,
-                capture_output=True,
-                text=True
-            )
-            st.code(result.stdout, language="bash")
-        except subprocess.CalledProcessError as e:
-            st.error(f"❌ Error in `{script.name}`")
-            st.code(e.stderr or "No stderr output", language="bash")
+            # Set expected filenames for run_all.py
+            os.rename(excel_path, "input.xlsx")
+            os.rename(docx_path, "template.docx")
 
-    # Offer final docx for download
-    filled_versions = sorted(Path(".").glob("*filled v*.docx"), key=os.path.getmtime, reverse=True)
-    if filled_versions:
-        latest_file = filled_versions[0]
-        with open(latest_file, "rb") as f:
-            st.download_button(
-                label=f"📥 Download: {latest_file.name}",
-                data=f,
-                file_name=latest_file.name,
-                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            )
-    else:
-        st.warning("⚠️ No filled document found to download.")
+            # Run the automation pipeline
+            result = subprocess.run([sys.executable, "run_all.py"], check=True, capture_output=True, text=True)
+            st.success("🎉 Agreement generated successfully!")
+
+            # Move output to temp for download
+            shutil.move("filled_agreement.docx", OUTPUT_DOC)
+            with open(OUTPUT_DOC, "rb") as file:
+                st.download_button("📥 Download Agreement", file, file_name="JV_Agreement_Final.docx")
+        except subprocess.CalledProcessError as e:
+            st.error("❌ Error during generation.")
+            st.text(e.stdout)
+            st.text(e.stderr)
+else:
+    st.info("📤 Please upload both the Excel and Word files to begin.")
