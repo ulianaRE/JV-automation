@@ -30,6 +30,7 @@ filler_scripts = [
     "fill_party_b_amount_plus_roi.py",
     "fill_funds_released_at_coe.py",
     "fill_maturity_date.py",
+    "fill_party_b_late_fees.py",
     # Add more scripts here
 ]
 
