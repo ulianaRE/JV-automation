@@ -33,6 +33,7 @@ filler_scripts = [
     "fill_party_b_late_fees.py",
     "fill_grace_period.py",
     "fill_grace_period2.py",
+    "fill_party_b_signature.py",
     # Add more scripts here
 ]
 
