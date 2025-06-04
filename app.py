@@ -44,6 +44,13 @@ if uploaded_excel and uploaded_docx:
 
             if os.path.exists(OUTPUT_FILENAME):
                 shutil.move(OUTPUT_FILENAME, OUTPUT_DOC)
+
+                # 📄 PREVIEW: Show the entire document content
+                doc = docx.Document(OUTPUT_DOC)
+                full_text = "\n\n".join(p.text for p in doc.paragraphs if p.text.strip())
+                st.text_area("📄 Full Agreement Preview", full_text, height=500)
+
+                # 📥 DOWNLOAD
                 with open(OUTPUT_DOC, "rb") as file:
                     st.download_button("📥 Download Agreement", file, file_name="JV_Agreement_Final.docx")
             else:
