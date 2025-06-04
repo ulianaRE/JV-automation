@@ -27,6 +27,7 @@ filler_scripts = [
     "fill_escrow_agent.py",
     "fill_party_a_funding.py",
     "fill_party_b_funding.py",
+    "fill_party_b_amount_plus_roi.py",
     # Add more scripts here
 ]
 
