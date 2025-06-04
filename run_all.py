@@ -20,6 +20,8 @@ filler_scripts = [
     "fill_lender_name.py",
     "fill_lender_address.py",   
     "fill_lender_email.py", 
+    "fill_lender_phone.py",
+    "fill_title_entity",
     "fill_party_a_funding.py",
     # Add more scripts here
 ]
