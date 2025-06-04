@@ -1,6 +1,6 @@
 
 """
-fill_docx_v55.py
+fill_party_b_signature.py
 
 This script fills a Word document paragraph with a cleaned-up entity name and
 a full U.S. state name, formatted for legal use, based on a JSON input.
@@ -37,7 +37,7 @@ def get_article(word):
     return "an" if word[0].lower() in 'aeiou' else "a"
 
 print()  # Empty line for visual separation
-print(f"🔄 Script started: fill_docx_v55.py")
+print(f"🔄 Script started: fill_party_b_signature.py")
 
 # Load JSON data
 try:

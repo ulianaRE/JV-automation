@@ -63,6 +63,7 @@ def main():
     extract_cross_value(df, "Extension Fee (per month)", "Funding Partner #1", "funding_partner1_late_fee")
     extract_cross_value(df, "Extension Fee (per month)", "Owner Partner", "owner_partner_late_fee")
     extract_adjacent_value(df, "Funds released at COE", "funds_released_at_COE")
+    extract_cross_value(df, "Entity Formation State", "Funding Partner #1", "funding_partner1_state")
 
     # Save and print results
     with open("extracted_values.json", "w") as f:
