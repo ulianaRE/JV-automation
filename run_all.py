@@ -18,6 +18,7 @@ filler_scripts = [
     "extract_values.py",
     "fill_property.py",
     "fill_lender_name.py",
+    "fill_lender_address.py",    
     "fill_party_a_funding.py",
     # Add more scripts here
 ]
