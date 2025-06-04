@@ -3,8 +3,8 @@ import json
 from docx import Document
 
 # 🧾 Constants
-INPUT_DOCX_PATH = "JV Agreement - 1 PML.docx"
-OUTPUT_DOCX_PATH = "JV Agreement - 1 PML.docx"
+INPUT_DOCX_PATH = "working_agreement.docx"
+OUTPUT_DOCX_PATH = "working_agreement.docx"
 JSON_PATH = "extracted_values.json"
 LABEL = "capital investment of Party B"
 KEY = "owner_partner_funding"

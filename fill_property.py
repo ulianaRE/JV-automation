@@ -4,8 +4,8 @@ from docx import Document
 from docx.shared import Pt
 
 # 🧾 Constants
-INPUT_DOCX_PATH = "JV Agreement - 1 PML.docx"
-OUTPUT_DOCX_PATH = "JV Agreement - 1 PML.docx"
+INPUT_DOCX_PATH = "working_agreement.docx"
+OUTPUT_DOCX_PATH = "working_agreement.docx"
 JSON_PATH = "extracted_values.json"
 LABEL = "1.1 Property:"
 KEY = "property_address"

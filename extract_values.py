@@ -2,7 +2,7 @@ import pandas as pd
 import json
 
 # === File Path & Sheet Name ===
-XLSX_PATH = "Project Info Sheet for AI.xlsx"
+XLSX_PATH = "spreadsheet_input.xlsx"
 SHEET_NAME = "1 PML"
 
 values = {}

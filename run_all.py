@@ -1,45 +1,34 @@
-# run_all.py
-# Master runner script for executing modular document automation steps
-
+import shutil
+from pathlib import Path
 import subprocess
-import os
 import sys
 
-def run_script(script_name):
-    """Run an individual Python script and report its output."""
-    print(f"▶️ Running {script_name}...")
-    result = subprocess.run([sys.executable, script_name], capture_output=True, text=True)
-    if result.stdout:
-        print(result.stdout)
-    if result.stderr:
-        print(f"⚠️ Error in {script_name}: {result.stderr}")
+# === CONSTANTS ===
+TEMPLATE_DOCX = "template.docx"
+WORKING_DOCX = "working_agreement.docx"
+OUTPUT_DOCX = "filled_agreement.docx"
 
-def main():
-    print("\n📄 Starting full document automation process...")
+# Step 1: Create a working copy of the template
+if Path(WORKING_DOCX).exists():
+    Path(WORKING_DOCX).unlink()
+shutil.copy(TEMPLATE_DOCX, WORKING_DOCX)
 
-    scripts = [
-        "extract_values.py",
-        "fill_property.py",
-        "fill_party_a_funding.py",
-        # Add more scripts here as needed
-    ]
+# Step 2: Run each filler script
+filler_scripts = [
+    "extract_values.py",
+    "fill_property.py",
+    "fill_party_a_funding.py",
+    # Add more scripts here
+]
 
-    for script in scripts:
-        if os.path.exists(script):
-            run_script(script)
-        else:
-            print(f"❌ Script not found: {script}")
+for script in filler_scripts:
+    result = subprocess.run([sys.executable, script], capture_output=True, text=True)
+    if result.returncode != 0:
+        print(f"❌ Error running {script}")
+        print("STDOUT:", result.stdout)
+        print("STDERR:", result.stderr)
+        raise RuntimeError(f"{script} failed")
 
-    # Cleanup: delete the extracted_values.json file
-    json_path = "extracted_values.json"
-    if os.path.exists(json_path):
-        try:
-            os.remove(json_path)
-            print(f"🧹 Removed temporary file: {json_path}")
-        except Exception as e:
-            print(f"⚠️ Could not delete {json_path}: {e}")
-
-    print("\n✅ All scripts executed. Check the generated document(s).")
-
-if __name__ == "__main__":
-    main()
+# Step 3: Finalize the document
+shutil.copy(WORKING_DOCX, OUTPUT_DOCX)
+print(f"✅ All done! Final agreement saved as {OUTPUT_DOCX}")
