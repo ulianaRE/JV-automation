@@ -17,6 +17,7 @@ shutil.copy(TEMPLATE_DOCX, WORKING_DOCX)
 filler_scripts = [
     "extract_values.py",
     "fill_property.py",
+    "fill_lender_name.py",
     "fill_party_a_funding.py",
     # Add more scripts here
 ]
