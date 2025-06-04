@@ -26,6 +26,7 @@ filler_scripts = [
     "fill_title_phone.py",
     "fill_escrow_agent.py",
     "fill_party_a_funding.py",
+    "fill_party_b_funding.py",
     # Add more scripts here
 ]
 
