@@ -23,6 +23,8 @@ filler_scripts = [
     "fill_lender_phone.py",
     "fill_coe_date.py",
     "fill_tiltle_entity.py",
+    "fill_title_phone.py",
+    "fill_escrow_agent.py",
     "fill_party_a_funding.py",
     # Add more scripts here
 ]
