@@ -5,7 +5,7 @@ from docx.shared import Pt
 
 # 🧾 Constants
 INPUT_DOCX_PATH = "working_agreement.docx"
-OUTPUT_DOCX_PATH = "working_agreement.docx.docx"
+OUTPUT_DOCX_PATH = "working_agreement.docx"
 JSON_PATH = "extracted_values.json"
 TARGET_LABEL = "Party B"
 INSERT_LABEL = "Name:"
