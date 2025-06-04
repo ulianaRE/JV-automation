@@ -28,6 +28,7 @@ filler_scripts = [
     "fill_party_a_funding.py",
     "fill_party_b_funding.py",
     "fill_party_b_amount_plus_roi.py",
+    "fill_funds_released_at_coe.py",
     # Add more scripts here
 ]
 

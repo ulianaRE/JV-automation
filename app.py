@@ -14,7 +14,7 @@ OUTPUT_DOC = os.path.join(TEMP_DIR, OUTPUT_FILENAME)
 # === UI CONFIG ===
 st.set_page_config(page_title="JV Agreement Automation Tool", page_icon="🧾")
 st.title("🧾 JV Agreement Automation Tool")
-st.write("Upload your Excel and Word template files to generate a custom JV Agreement.")
+st.write("Hi Marcia! Let's run this automation! Please upload your files.")
 
 # === FILE UPLOADS ===
 uploaded_excel = st.file_uploader("Upload Excel (.xlsx)", type="xlsx")
