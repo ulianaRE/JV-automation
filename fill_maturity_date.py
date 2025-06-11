@@ -60,6 +60,7 @@ def process_doc():
             last_run = para.runs[-1] if para.runs else None
             font_name = last_run.font.name if last_run else None
             font_size = last_run.font.size if last_run else None
+            highlight_color = last_run.font.highlight_color if last_run else None
 
             print(f"📝 Font used - Name: {font_name}, Size: {font_size.pt if font_size else 'Default'}")
 
@@ -69,6 +70,7 @@ def process_doc():
                 run = para.add_run(text)
                 run.font.name = font_name
                 run.font.size = font_size
+                run.font.highlight_color = highlight_color
             break
 
     if not found:
