@@ -9,7 +9,7 @@ JSON_PATH = "extracted_values.json"
 LABEL = "B is entitled to receive the return of their funding"
 KEY_AMOUNT = "funding_partner1_funding"
 KEY_FEE = "funding_partner1_ROI"
-BALLOT_BOX = "☐"
+BALLOT_BOX = "☒"
 
 def format_currency(value):
     """Formats a numeric value as currency, e.g., 1250000 → $1,250,000.00"""
@@ -48,17 +48,17 @@ def process_doc():
             print(f"🔍 Found paragraph with label text: '{LABEL}'")
             found = True
 
-            # Extract style from the last run of the paragraph
-            last_run = para.runs[-1] if para.runs else None
-            font_name = last_run.font.name if last_run else None
-            font_size = last_run.font.size if last_run else None
+            # Extract style from the first run of the paragraph
+            first_run = para.runs[0] if para.runs else None
+            font_name = first_run.font.name if first_run else None
+            font_size = first_run.font.size if first_run else None
             print(f"📝 Font used - Name: {font_name}, Size: {font_size.pt if font_size else 'Default'}")
 
             # Replace the paragraph with the new structured sentence
             para.clear()
             parts = [
                 BALLOT_BOX,
-                "  ",
+                " ",
                 "Party B is entitled to receive the return of their funding contribution in the amount of ",
                 formatted_amount,
                 ", a lending fee of ",
@@ -69,7 +69,8 @@ def process_doc():
                 run = para.add_run(text)
                 run.font.name = font_name
                 run.font.size = font_size
-                run.underline = True  # apply underline to all inserted content
+                if text in [formatted_amount, formatted_fee]:
+                    run.bold = True
             break
 
     if not found:

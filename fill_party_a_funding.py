@@ -8,7 +8,7 @@ OUTPUT_DOCX_PATH = "working_agreement.docx"
 JSON_PATH = "extracted_values.json"
 LABEL = "capital investment of Party B"
 KEY = "owner_partner_funding"
-BALLOT_BOX = "☐"
+BALLOT_BOX = "☒"
 
 def format_currency(value):
     """Formats a numeric value as currency, e.g., 1250000 → $1,250,000.00"""
@@ -72,7 +72,7 @@ def process_doc():
             para.clear()
             parts = [
                 BALLOT_BOX,
-                "  ",  # 2 spaces
+                " ",  # 1 space
                 "Party A funding: ",
                 "all amounts exceeding the ",
                 formatted_value,
@@ -83,7 +83,7 @@ def process_doc():
                 run = para.add_run(text)
                 run.font.name = style['font_name']
                 run.font.size = style['font_size']
-                run.bold = style['bold']
+                run.bold = True if text == formatted_value else style['bold']
                 run.italic = style['italic']
                 run.underline = style['underline']
             break
