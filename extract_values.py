@@ -3,7 +3,7 @@ import json
 
 # === File Path & Sheet Name ===
 XLSX_PATH = "spreadsheet_input.xlsx"
-SHEET_NAME = "1 PML"
+SHEET_NAME = "sheetname_input"
 
 values = {}
 
@@ -46,24 +46,24 @@ def main():
     df = pd.read_excel(XLSX_PATH, sheet_name=SHEET_NAME, header=None)
 
     extract_adjacent_value(df, "Property:", "property_address")
-    extract_cross_value(df, "Entity or Name", "Funding Partner #1", "funding_partner1_entity")
-    extract_cross_value(df, "Address", "Funding Partner #1", "funding_partner1_address")
-    extract_cross_value(df, "Phone #", "Funding Partner #1", "funding_partner1_phone")
-    extract_cross_value(df, "Email", "Funding Partner #1", "funding_partner1_email")
+    extract_cross_value(df, "Entity or Name", "Party B", "funding_partner1_entity")
+    extract_cross_value(df, "Address for JV", "Party B", "funding_partner1_address")
+    extract_cross_value(df, "Phone #", "Party B", "funding_partner1_phone")
+    extract_cross_value(df, "Email", "Party B", "funding_partner1_email")
     extract_adjacent_value(df, "COE", "coe_date")
     extract_cross_value(df, "Entity or Name", "Title Company", "title_company_entity")
     extract_cross_value(df, "Phone #", "Title Company", "title_company_phone")
     extract_cross_value(df, "Name", "Title Company", "title_company_name")
     extract_cross_value(df, "Email", "Title Company", "title_company_email")
-    extract_cross_value(df, "Funding Amount", "Owner Partner", "owner_partner_funding")
-    extract_cross_value(df, "Funding Amount", "Funding Partner #1", "funding_partner1_funding")
-    extract_cross_value(df, "ROI", "Funding Partner #1", "funding_partner1_ROI")
+    extract_cross_value(df, "Funding Amount", "Party A", "owner_partner_funding")
+    extract_cross_value(df, "Funding Amount", "Party B", "funding_partner1_funding")
+    extract_cross_value(df, "ROI", "Party B", "funding_partner1_ROI")
     extract_adjacent_value(df, "Maturity Date", "maturity_date")
     extract_adjacent_value(df, "Grace Period", "grace_period")
-    extract_cross_value(df, "Extension Fee (per month)", "Funding Partner #1", "funding_partner1_late_fee")
-    extract_cross_value(df, "Extension Fee (per month)", "Owner Partner", "owner_partner_late_fee")
+    extract_cross_value(df, "Extension Fee (per month)", "Party B", "funding_partner1_late_fee")
+    extract_cross_value(df, "Extension Fee (per month)", "Party A", "owner_partner_late_fee")
     extract_adjacent_value(df, "Funds released at COE", "funds_released_at_COE")
-    extract_cross_value(df, "Entity Formation State", "Funding Partner #1", "funding_partner1_state")
+    extract_cross_value(df, "Entity Formation State", "Party B", "funding_partner1_state")
 
     # Save and print results
     with open("extracted_values.json", "w") as f:
