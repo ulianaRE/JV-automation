@@ -38,8 +38,8 @@ def process_doc():
         value = normalize_us_phone(raw_value)
         print(f"✅ Normalized phone number: '{value}'")
     except ValueError as e:
-        print(f"❌ Error: {e}")
-        return
+        print(f"⚠️ Could not normalize phone. Using raw value: {raw_value}")
+        value = raw_value
 
     found_party_b = False
     found_phone_label = False
