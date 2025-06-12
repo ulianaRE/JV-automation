@@ -31,6 +31,7 @@ filler_scripts = [
     "fill_funds_released_at_coe.py",
     "fill_maturity_date.py",
     "fill_party_b_late_fees.py",
+    "fill_remedies_on_default.py",
     "fill_party_b_signature.py",
     # Add more scripts here
 ]
