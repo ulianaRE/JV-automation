@@ -62,7 +62,6 @@ def main():
     extract_adjacent_value(df, "Grace Period", "grace_period")
     extract_cross_value(df, "Extension Fee (per month)", "Party B", "funding_partner1_late_fee")
     extract_cross_value(df, "Extension Fee (per month)", "Party A", "owner_partner_late_fee")
-    extract_adjacent_value(df, "Funds released at COE", "funds_released_at_COE")
     extract_cross_value(df, "Entity Formation State", "Party B", "funding_partner1_state")
 
     # Save and print results

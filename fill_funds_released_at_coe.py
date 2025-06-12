@@ -7,7 +7,7 @@ INPUT_DOCX_PATH = "working_agreement.docx"
 OUTPUT_DOCX_PATH = "working_agreement.docx"
 JSON_PATH = "extracted_values.json"
 LABEL = "From the total funding contribution outlined in Section 1.5, an immediate sum of "
-KEY = "funds_released_at_COE"
+KEY = "owner_partner_funding"
 
 def format_currency(value):
     """Formats a numeric value as currency, e.g., 1250000 → $1,250,000.00"""
@@ -17,7 +17,7 @@ def format_currency(value):
         return value  # fallback in case of non-numeric
 
 def process_doc():
-    print("\n📘 Running fill_docx_v48.py")
+    print("\n📘 Running fill_funds_released_at_coe.py")
     print("📂 Loading document and JSON...")
 
     # Load the Word document and JSON data
@@ -42,10 +42,10 @@ def process_doc():
             print(f"🔍 Found paragraph starting with label: '{LABEL}'")
             found = True
 
-            # Attempt to extract font/style from the last run
-            last_run = para.runs[-1] if para.runs else None
-            font_name = last_run.font.name if last_run else None
-            font_size = last_run.font.size if last_run else None
+            # Extract font/style from the 1st run
+            first_run = para.runs[0] if para.runs else None
+            font_name = first_run.font.name if first_run else None
+            font_size = first_run.font.size if first_run else None
 
             print(f"📝 Font used - Name: {font_name}, Size: {font_size.pt if font_size else 'Default'}")
 
@@ -60,6 +60,7 @@ def process_doc():
                 run = para.add_run(text)
                 run.font.name = font_name
                 run.font.size = font_size
+                run.bold = True if text == formatted_value else None
             break
 
     if not found:

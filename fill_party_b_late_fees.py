@@ -17,7 +17,7 @@ def format_currency(value):
         return value  # fallback in case of non-numeric
 
 def process_doc():
-    print("\n📘 Running fill_docx_v52.py")
+    print("\n📘 Running fill_party_b_late_fees.py")
     print("📂 Loading document and JSON...")
 
     doc = Document(INPUT_DOCX_PATH)
@@ -39,9 +39,9 @@ def process_doc():
             print(f"🔍 Found paragraph starting with label: '{LABEL}'")
             found = True
 
-            last_run = para.runs[-1] if para.runs else None
-            font_name = last_run.font.name if last_run else None
-            font_size = last_run.font.size if last_run else None
+            first_run = para.runs[0] if para.runs else None
+            font_name = first_run.font.name if first_run else None
+            font_size = first_run.font.size if first_run else None
 
             print(f"📝 Font used - Name: {font_name}, Size: {font_size.pt if font_size else 'Default'}")
 

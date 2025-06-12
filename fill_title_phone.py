@@ -20,7 +20,7 @@ def normalize_us_phone(phone_raw):
     return f"({digits[:3]}) {digits[3:6]}-{digits[6:]}"
 
 def process_doc():
-    print("\n📘 Running fill_docx_v49.py")
+    print("\n📘 Running fill_title_phone.py")
     print("📂 Loading document and JSON...")
 
     # Load the document and JSON file
@@ -38,8 +38,8 @@ def process_doc():
         value = normalize_us_phone(raw_value)
         print(f"✅ Normalized phone number: '{value}'")
     except ValueError as e:
-        print(f"⚠️ Error: {e}. Skipping.")
-        return
+        print(f"⚠️ Error: {e}. Couldn't normalize the value, using raw phone number instead.")
+        value = raw_value
 
     found_primary = False
     found_target = False
