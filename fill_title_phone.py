@@ -63,9 +63,18 @@ def process_doc():
 
             # Replace content
             para.clear()
-            run = para.add_run(f"{TARGET_LABEL} {value}")
-            run.font.name = font_name
-            run.font.size = Pt(font_size)
+
+            # Bold label
+            label_run = para.add_run(TARGET_LABEL)
+            label_run.bold = True
+            label_run.font.name = font_name
+            label_run.font.size = Pt(font_size)
+
+            # Space + non-bold value
+            value_run = para.add_run(f" {value}")
+            value_run.font.name = font_name
+            value_run.font.size = Pt(font_size)
+
             break
 
     if not found_primary:

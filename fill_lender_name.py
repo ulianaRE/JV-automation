@@ -47,9 +47,18 @@ def process_doc():
 
             # Replace text in paragraph
             para.clear()
-            run = para.add_run(f"{INSERT_LABEL} {value}")
-            run.font.name = font_name
-            run.font.size = Pt(font_size)
+
+            # Bold label
+            label_run = para.add_run(INSERT_LABEL)
+            label_run.bold = True
+            label_run.font.name = font_name
+            label_run.font.size = Pt(font_size)
+
+            # Space + value (not bold)
+            value_run = para.add_run(f" {value}")
+            value_run.font.name = font_name
+            value_run.font.size = Pt(font_size)
+
             break
 
     if not found_party_b:
