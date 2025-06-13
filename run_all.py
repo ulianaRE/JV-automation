@@ -36,14 +36,28 @@ filler_scripts = [
     # Add more scripts here
 ]
 
+errors = []
+
 for script in filler_scripts:
+    print(f"▶️ Running {script} ...")
     result = subprocess.run([sys.executable, script], capture_output=True, text=True)
+    
     if result.returncode != 0:
-        print(f"❌ Error running {script}")
-        print("STDOUT:", result.stdout)
-        print("STDERR:", result.stderr)
-        raise RuntimeError(f"{script} failed")
+        print(f"❌ Error in {script}")
+        print("STDOUT:", result.stdout.strip())
+        print("STDERR:", result.stderr.strip())
+        errors.append(script)
+    else:
+        print(f"✅ {script} completed")
 
 # Step 3: Finalize the document
 shutil.copy(WORKING_DOCX, OUTPUT_DOCX)
-print(f"✅ All done! Final agreement saved as {OUTPUT_DOCX}")
+print(f"\n✅ Final agreement saved as {OUTPUT_DOCX}")
+
+# Step 4: Report any errors
+if errors:
+    print("\n⚠️ The following scripts had errors and may need review:")
+    for err in errors:
+        print(f" - {err}")
+else:
+    print("\n🎉 All scripts ran successfully!")
