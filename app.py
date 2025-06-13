@@ -4,40 +4,58 @@ import sys
 import os
 import shutil
 
-# Constants
+# === CONSTANTS ===
+INPUT_EXCEL = "spreadsheet_input.xlsx"
+TEMPLATE_DOCX = "template.docx"
+OUTPUT_FILENAME = "filled_agreement.docx"
 TEMP_DIR = "temp"
-EXCEL_PATH = os.path.join(TEMP_DIR, "spreadsheet_input.xlsx")
-TEMPLATE_PATH = os.path.join(TEMP_DIR, "template.docx")
-OUTPUT_DOC = "filled_agreement.docx"
+OUTPUT_DOC = os.path.join(TEMP_DIR, OUTPUT_FILENAME)
 
-# UI
+# === UI CONFIG ===
 st.set_page_config(page_title="JV Agreement Automation Tool", page_icon="🧾")
 st.title("🧾 JV Agreement Automation Tool")
-st.write("Please upload your Excel and Word template files.")
+st.write("Hi Marcia! Let's run it! Please upload your files.")
 
-# Ensure temp dir exists
+# === FILE UPLOADS ===
+uploaded_excel = st.file_uploader("Upload Excel (.xlsx)", type="xlsx")
+uploaded_docx = st.file_uploader("Upload JV Agreement Template (.docx)", type="docx")
+
 os.makedirs(TEMP_DIR, exist_ok=True)
 
-# File uploads
-xlsx = st.file_uploader("Upload Excel (.xlsx)", type="xlsx")
-docx = st.file_uploader("Upload Word Template (.docx)", type="docx")
+if uploaded_excel and uploaded_docx:
+    excel_path = os.path.join(TEMP_DIR, uploaded_excel.name)
+    docx_path = os.path.join(TEMP_DIR, uploaded_docx.name)
 
-# Save uploaded files if provided
-if xlsx:
-    with open(EXCEL_PATH, "wb") as f:
-        f.write(xlsx.getbuffer())
-    st.success("✅ Excel uploaded and saved.")
+    with open(excel_path, "wb") as f:
+        f.write(uploaded_excel.getbuffer())
+    with open(docx_path, "wb") as f:
+        f.write(uploaded_docx.getbuffer())
 
-if docx:
-    with open(TEMPLATE_PATH, "wb") as f:
-        f.write(docx.getbuffer())
-    st.success("✅ Word template uploaded and saved.")
+    st.success("✅ Files uploaded!")
 
-# Trigger processing
-if xlsx and docx and st.button("Generate JV Agreement"):
-    subprocess.run([sys.executable, "run_all.py"], check=False)
-    if os.path.exists(OUTPUT_DOC):
-        with open(OUTPUT_DOC, "rb") as f:
-            st.download_button("📥 Download Agreement", f, file_name="JV_Agreement_Final.docx")
-    else:
-        st.error("❌ Agreement generation failed. Please check your files and try again.")
+    if st.button("Generate JV Agreement"):
+        try:
+            # Move uploaded files to expected names
+            shutil.move(excel_path, INPUT_EXCEL)
+            shutil.move(docx_path, TEMPLATE_DOCX)
+
+            # Run the backend pipeline
+            result = subprocess.run([sys.executable, "run_all.py"], check=True, capture_output=True, text=True)
+
+            if os.path.exists(OUTPUT_FILENAME):
+                shutil.move(OUTPUT_FILENAME, OUTPUT_DOC)
+
+                # 📥 DOWNLOAD
+                with open(OUTPUT_DOC, "rb") as file:
+                    st.download_button("📥 Download Agreement", file, file_name="JV_Agreement_Final.docx")
+            else:
+                st.error("❌ The agreement was not generated.")
+                st.text(result.stdout)
+                st.text(result.stderr)
+
+        except subprocess.CalledProcessError as e:
+            st.error("❌ An error occurred during document generation.")
+            st.text(e.stdout)
+            st.text(e.stderr)
+else:
+    st.info("📤 Please upload both the Excel and Word files to proceed.")
