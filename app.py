@@ -2,7 +2,13 @@ import streamlit as st
 import subprocess
 import sys
 import os
-import tempfile
+
+# === CONSTANTS ===
+TEMP_DIR = "temp"
+INPUT_EXCEL = os.path.join(TEMP_DIR, "spreadsheet_input.xlsx")
+TEMPLATE_DOCX = os.path.join(TEMP_DIR, "template.docx")
+OUTPUT_FILENAME = "filled_agreement.docx"
+OUTPUT_DOC = os.path.join(TEMP_DIR, OUTPUT_FILENAME)
 
 # === UI CONFIG ===
 st.set_page_config(page_title="JV Agreement Automation Tool", page_icon="🧾")
@@ -13,41 +19,33 @@ st.write("Hi Marcia! Let's run it! Please upload your files.")
 uploaded_excel = st.file_uploader("Upload Excel (.xlsx)", type="xlsx")
 uploaded_docx = st.file_uploader("Upload JV Agreement Template (.docx)", type="docx")
 
+os.makedirs(TEMP_DIR, exist_ok=True)
+
+def save_uploaded_file(uploaded_file, path):
+    with open(path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+
 if uploaded_excel and uploaded_docx:
+    save_uploaded_file(uploaded_excel, INPUT_EXCEL)
+    save_uploaded_file(uploaded_docx, TEMPLATE_DOCX)
     st.success("✅ Files uploaded!")
 
     if st.button("Generate JV Agreement"):
-        with tempfile.TemporaryDirectory() as temp_dir:
-            # Save uploaded files to temp directory
-            excel_path = os.path.join(temp_dir, "input.xlsx")
-            docx_path = os.path.join(temp_dir, "template.docx")
-            output_path = os.path.join(temp_dir, "filled_agreement.docx")
+        try:
+            result = subprocess.run([sys.executable, "run_all.py"], check=True, capture_output=True, text=True)
 
-            with open(excel_path, "wb") as f:
-                f.write(uploaded_excel.getbuffer())
-            with open(docx_path, "wb") as f:
-                f.write(uploaded_docx.getbuffer())
+            if os.path.exists(OUTPUT_FILENAME):
+                os.replace(OUTPUT_FILENAME, OUTPUT_DOC)
+                with open(OUTPUT_DOC, "rb") as file:
+                    st.download_button("📥 Download Agreement", file, file_name="JV_Agreement_Final.docx")
+            else:
+                st.error("❌ The agreement was not generated.")
+                st.code(result.stdout)
+                st.code(result.stderr)
 
-            # Run the backend script
-            try:
-                result = subprocess.run(
-                    [sys.executable, "run_all.py", excel_path, docx_path, output_path],
-                    capture_output=True,
-                    text=True,
-                    check=True
-                )
-
-                if os.path.exists(output_path):
-                    with open(output_path, "rb") as file:
-                        st.download_button("📥 Download Agreement", file, file_name="JV_Agreement_Final.docx")
-                else:
-                    st.error("❌ The agreement was not generated.")
-                    st.text(result.stdout)
-                    st.text(result.stderr)
-
-            except subprocess.CalledProcessError as e:
-                st.error("❌ An error occurred during document generation.")
-                st.text(e.stdout)
-                st.text(e.stderr)
+        except subprocess.CalledProcessError as e:
+            st.error("❌ An error occurred during document generation.")
+            st.code(e.stdout)
+            st.code(e.stderr)
 else:
     st.info("📤 Please upload both the Excel and Word files to proceed.")
