@@ -8,6 +8,7 @@ import shutil
 INPUT_EXCEL = "spreadsheet_input.xlsx"
 TEMPLATE_DOCX = "template.docx"
 OUTPUT_FILENAME = "filled_agreement.docx"
+LOG_FILE = "run_all.log"
 TEMP_DIR = "temp"
 OUTPUT_DOC = os.path.join(TEMP_DIR, OUTPUT_FILENAME)
 
@@ -45,17 +46,24 @@ if uploaded_excel and uploaded_docx:
             if os.path.exists(OUTPUT_FILENAME):
                 shutil.move(OUTPUT_FILENAME, OUTPUT_DOC)
 
-                # 📥 DOWNLOAD
+                # 📥 Download filled agreement
                 with open(OUTPUT_DOC, "rb") as file:
                     st.download_button("📥 Download Agreement", file, file_name="JV_Agreement_Final.docx")
+
             else:
                 st.error("❌ The agreement was not generated.")
                 st.text(result.stdout)
                 st.text(result.stderr)
 
+            # 📋 Log file download (always offered if it exists)
+            if os.path.exists(LOG_FILE):
+                with open(LOG_FILE, "rb") as f:
+                    st.download_button("📝 Download Log File", f, file_name="run_all.log")
+
         except subprocess.CalledProcessError as e:
             st.error("❌ An error occurred during document generation.")
             st.text(e.stdout)
             st.text(e.stderr)
+
 else:
     st.info("📤 Please upload both the Excel and Word files to proceed.")
