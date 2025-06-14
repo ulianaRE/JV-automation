@@ -73,6 +73,3 @@ if st.session_state.get("generated"):
     if os.path.exists(LOG_FILE):
         with open(LOG_FILE, "rb") as f:
             st.download_button("📝 Download Log File", f, file_name="run_all.log")
-else:
-    if not uploaded_excel or not uploaded_docx:
-        st.info("📤 Please upload both the Excel and Word files to proceed.")
