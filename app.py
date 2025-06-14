@@ -25,28 +25,40 @@ def reset_on_upload(file_key):
         st.session_state.generated = False
 
 # === FILE UPLOADS ===
-st.file_uploader("Upload Excel (.xlsx)", type="xlsx", key="excel", on_change=lambda: reset_on_upload("excel"))
 st.file_uploader("Upload JV Agreement Template (.docx)", type="docx", key="docx", on_change=lambda: reset_on_upload("docx"))
+st.file_uploader("Upload Excel (.xlsx)", type="xlsx", key="excel", on_change=lambda: reset_on_upload("excel"))
 
-uploaded_excel = st.session_state.get("excel")
 uploaded_docx = st.session_state.get("docx")
+uploaded_excel = st.session_state.get("excel")
 
 if uploaded_excel and uploaded_docx:
     excel_path = os.path.join(TEMP_DIR, uploaded_excel.name)
     docx_path = os.path.join(TEMP_DIR, uploaded_docx.name)
 
-    with open(excel_path, "wb") as f:
-        f.write(uploaded_excel.getbuffer())
     with open(docx_path, "wb") as f:
         f.write(uploaded_docx.getbuffer())
+    with open(excel_path, "wb") as f:
+        f.write(uploaded_excel.getbuffer())
+
+    # Get green sheet names and let the user pick
+    from get_green_sheets import get_green_sheets
+
+    green_sheets = get_green_sheets(excel_path)
+    if green_sheets:
+        selected_sheet = st.selectbox("📗 Choose a green-labeled sheet to process:",     green_sheets, key="selected_sheet")
+        st.session_state.selected_sheet = selected_sheet
+    else:
+        st.warning("⚠️ No green-labeled sheets found in the uploaded Excel file.")
+    st.stop()
+    # green sheets uploaded
 
     st.success("✅ Files uploaded!")
 
     if st.button("Generate JV Agreement"):
         try:
             # Move uploaded files to expected names
-            shutil.move(excel_path, INPUT_EXCEL)
             shutil.move(docx_path, TEMPLATE_DOCX)
+            shutil.move(excel_path, INPUT_EXCEL)
 
             # Run backend pipeline
             result = subprocess.run([sys.executable, "run_all.py"], check=True, capture_output=True, text=True)
