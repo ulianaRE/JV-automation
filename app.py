@@ -108,4 +108,5 @@ if st.session_state.get("generated"):
     with col3:
         if st.button("🔄 Start Another JV"):
             st.session_state.clear()
+            st.markdown("<meta http-equiv='refresh' content='0'>", unsafe_allow_html=True)
             st.stop()
