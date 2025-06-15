@@ -108,32 +108,5 @@ if st.session_state.get("generated"):
     with col3:
         if st.button("🔄 Start Another JV"):
             st.session_state.clear()
-
-            # Show overlay animation
-            st.markdown("""
-                <style>
-                .fade-overlay {
-                    position: fixed;
-                    top: 0; left: 0;
-                    width: 100%; height: 100%;
-                    background-color: white;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 2rem;
-                    font-weight: bold;
-                    color: #333;
-                    opacity: 1;
-                    z-index: 1000;
-                    animation: fadeout 1.2s ease forwards;
-                }
-                @keyframes fadeout {
-                    0% { opacity: 1; }
-                    100% { opacity: 0; }
-                }
-                </style>
-                <div class="fade-overlay">🌱 Starting a new JV… hang tight!</div>
-            """, unsafe_allow_html=True)
-
-            st.markdown("<meta http-equiv='refresh' content='1.3'>", unsafe_allow_html=True)
+            st.markdown("<meta http-equiv='refresh' content='0'>", unsafe_allow_html=True)
             st.stop()
