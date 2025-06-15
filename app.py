@@ -5,6 +5,35 @@ import os
 import shutil
 from get_green_sheets import get_green_sheets
 
+# === STYLING ===
+st.markdown("""
+    <style>
+    body {
+        background-color: #f9f4ef;
+        color: #3e3e3e;
+    }
+    .stApp {
+        background-color: #f9f4ef;
+    }
+    .stButton button, .stDownloadButton button {
+        background-color: #6b705c;
+        color: white;
+        border-radius: 8px;
+        padding: 0.5em 1.2em;
+        font-weight: 600;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .stButton button:hover, .stDownloadButton button:hover {
+        background-color: #588157;
+    }
+    .stSelectbox, .stFileUploader {
+        background-color: #ffffff;
+        border-radius: 6px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # === CONSTANTS ===
 INPUT_EXCEL = "spreadsheet_input.xlsx"
 TEMPLATE_DOCX = "template.docx"
