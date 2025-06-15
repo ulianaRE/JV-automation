@@ -41,18 +41,18 @@ if uploaded_excel and uploaded_docx:
         f.write(uploaded_excel.getbuffer())
 
     # Get green sheet names and let the user pick
+    st.success("✅ Files uploaded! Extracting the green sheets...")
     from get_green_sheets import get_green_sheets
 
     green_sheets = get_green_sheets(excel_path)
     if green_sheets:
-        selected_sheet = st.selectbox("📗 Choose a green-labeled sheet to process:",     green_sheets, key="selected_sheet")
-        st.session_state.selected_sheet = selected_sheet
+        selected_sheet = st.selectbox("📗 Choose a green-labeled sheet to process:",     
+                                      green_sheets, key="selected_sheet")
     else:
         st.warning("⚠️ No green-labeled sheets found in the uploaded Excel file.")
-    st.stop()
+        st.stop()
     # green sheets uploaded
 
-    st.success("✅ Files uploaded!")
 
     if st.button("Generate JV Agreement"):
         try:
