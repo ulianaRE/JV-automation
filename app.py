@@ -5,6 +5,11 @@ import os
 import shutil
 from get_green_sheets import get_green_sheets
 
+# === SMOOTH RESET HANDLER ===
+if st.session_state.get("reset_triggered"):
+    st.session_state.clear()
+    st.experimental_rerun()
+
 # === CONSTANTS ===
 INPUT_EXCEL = "spreadsheet_input.xlsx"
 TEMPLATE_DOCX = "template.docx"
@@ -107,6 +112,4 @@ if st.session_state.get("generated"):
                 st.download_button("📝 Log", f, file_name="run_all.log")
     with col3:
         if st.button("🔄 Start Another JV"):
-            st.session_state.clear()
-            st.markdown("<meta http-equiv='refresh' content='0'>", unsafe_allow_html=True)
-            st.stop()
+            st.session_state.reset_triggered = True
