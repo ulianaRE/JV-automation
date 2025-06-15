@@ -20,7 +20,7 @@ st.set_page_config(page_title="JV Agreement Automation Tool", page_icon="🧾")
 st.markdown("""
     <style>
     .stApp {
-        background-color: #f4e1d2;
+        background-color: #4e342e;
     }
     </style>
 """, unsafe_allow_html=True)
