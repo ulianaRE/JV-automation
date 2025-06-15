@@ -20,6 +20,11 @@ st.write("Hi Marcia! Let's run it! Please upload your files.")
 
 os.makedirs(TEMP_DIR, exist_ok=True)
 
+# === RESET FUNCTION ===
+def reset_app():
+    st.session_state.clear()
+    st.experimental_rerun()
+
 # === Reset State on Upload ===
 def reset_on_upload(file_key):
     if uploaded := st.session_state.get(file_key):
@@ -44,8 +49,6 @@ if uploaded_excel and uploaded_docx:
         f.write(uploaded_docx.getbuffer())
     with open(excel_path, "wb") as f:
         f.write(uploaded_excel.getbuffer())
-
-    st.success("✅ Files uploaded!")
 
     # Extract green sheets
     if "green_sheets" not in st.session_state or st.session_state.green_sheets is None:
@@ -108,6 +111,4 @@ if st.session_state.get("generated"):
             with open(LOG_FILE, "rb") as f:
                 st.download_button("📝 Log", f, file_name="run_all.log")
     with col3:
-        if st.button("🔄 Start Another JV"):
-            st.session_state.clear()
-            st.experimental_rerun()
+        st.button("🔄 Start Another JV", on_click=reset_app)
