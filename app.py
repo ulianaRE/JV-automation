@@ -45,7 +45,7 @@ if uploaded_excel and uploaded_docx:
     with open(excel_path, "wb") as f:
         f.write(uploaded_excel.getbuffer())
 
-#    st.success("✅ Files uploaded!")
+    st.success("✅ Files uploaded!")
 
     # Extract green sheets
     if "green_sheets" not in st.session_state or st.session_state.green_sheets is None:
@@ -98,7 +98,7 @@ if st.session_state.get("ready_to_generate") and not st.session_state.get("gener
 
 # === DOWNLOAD ZONE ===
 if st.session_state.get("generated"):
-    col1, col2 = st.columns([2, 1])
+    col1, col2, col3 = st.columns([2, 1, 1])
     with col1:
         if os.path.exists(OUTPUT_DOC):
             with open(OUTPUT_DOC, "rb") as f:
@@ -107,3 +107,7 @@ if st.session_state.get("generated"):
         if os.path.exists(LOG_FILE):
             with open(LOG_FILE, "rb") as f:
                 st.download_button("📝 Log", f, file_name="run_all.log")
+    with col3:
+        if st.button("🔄 Start Another JV"):
+            st.session_state.clear()
+            st.experimental_rerun()
