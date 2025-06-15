@@ -5,6 +5,11 @@ import os
 import shutil
 from get_green_sheets import get_green_sheets
 
+# === CHECK FOR RESET ===
+if st.session_state.get("reset_requested"):
+    st.session_state.clear()
+    st.experimental_rerun()
+
 # === CONSTANTS ===
 INPUT_EXCEL = "spreadsheet_input.xlsx"
 TEMPLATE_DOCX = "template.docx"
@@ -20,10 +25,9 @@ st.write("Hi Marcia! Let's run it! Please upload your files.")
 
 os.makedirs(TEMP_DIR, exist_ok=True)
 
-# === RESET FUNCTION ===
-def reset_app():
-    st.session_state.clear()
-    st.experimental_rerun()
+# === CALLBACK TO REQUEST RESET ===
+def request_reset():
+    st.session_state.reset_requested = True
 
 # === Reset State on Upload ===
 def reset_on_upload(file_key):
@@ -49,6 +53,8 @@ if uploaded_excel and uploaded_docx:
         f.write(uploaded_docx.getbuffer())
     with open(excel_path, "wb") as f:
         f.write(uploaded_excel.getbuffer())
+
+    st.success("✅ Files uploaded!")
 
     # Extract green sheets
     if "green_sheets" not in st.session_state or st.session_state.green_sheets is None:
@@ -111,4 +117,4 @@ if st.session_state.get("generated"):
             with open(LOG_FILE, "rb") as f:
                 st.download_button("📝 Log", f, file_name="run_all.log")
     with col3:
-        st.button("🔄 Start Another JV", on_click=reset_app)
+        st.button("🔄 Start Another JV", on_click=request_reset)
