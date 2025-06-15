@@ -1,3 +1,4 @@
+import sys
 import pandas as pd
 import json
 
@@ -43,8 +44,14 @@ def extract_adjacent_value(df, label, key_name):
     values[key_name] = value
     print(f"{key_name} = {value or 'NOT FOUND'}")
 
-# 🧾 Load Excel
-df = pd.read_excel(EXCEL_FILE, sheet_name=SHEET_NAME)
+# Load sheet name
+if len(sys.argv) < 2:
+    raise ValueError("No sheet name provided to extract_values.py")
+
+selected_sheet = sys.argv[1]
+
+# 🧾 Load Excel with only 1 sheet
+df = pd.read_excel(EXCEL_FILE, sheet_name=selected_sheet)
 
 # ✨ Print separator for clarity
 print("\n")

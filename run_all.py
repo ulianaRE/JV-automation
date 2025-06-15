@@ -9,6 +9,11 @@ WORKING_DOCX = "working_agreement.docx"
 OUTPUT_DOCX = "filled_agreement.docx"
 LOG_FILE = "run_all.log"  # Path for execution log file
 
+# === Read sheet name as CLI Argument ===
+if len(sys.argv) < 2:
+    raise ValueError("No sheet name provided to run_all.py")
+selected_sheet = sys.argv[1]
+
 # Step 1: Create a working copy of the template
 if Path(WORKING_DOCX).exists():
     Path(WORKING_DOCX).unlink()
@@ -45,7 +50,22 @@ with open(LOG_FILE, "w") as log:
 
 for i, script in enumerate(filler_scripts, start=1):
     print(f"[{i}/{len(filler_scripts)}] ▶️ Running {script} ...")
-    result = subprocess.run([sys.executable, script], capture_output=True, text=True)
+
+    # passing sheet name to extract_values.py
+    if script == "extract_values.py":
+        result = subprocess.run(
+            [sys.executable, script, selected_sheet],
+            capture_output=True,
+            text=True
+        )
+    else:
+        result = subprocess.run(
+            [sys.executable, script],
+            capture_output=True,
+            text=True
+        )
+
+#    result = subprocess.run([sys.executable, script], capture_output=True, text=True)
 
     # Write output to log
     with open(LOG_FILE, "a") as log:
