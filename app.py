@@ -5,10 +5,15 @@ import os
 import shutil
 from get_green_sheets import get_green_sheets
 
-# === CHECK FOR RESET ===
-if st.session_state.get("reset_requested"):
-    st.session_state.clear()
-    st.experimental_rerun()
+# === UI CONFIG ===
+st.set_page_config(page_title="JV Agreement Automation Tool", page_icon="🧾")
+
+# === SAFE RESET CHECK ===
+if st.session_state.get("reset_requested", False):
+    def _clear_and_rerun():
+        st.session_state.clear()
+        st.experimental_rerun()
+    _clear_and_rerun()
 
 # === CONSTANTS ===
 INPUT_EXCEL = "spreadsheet_input.xlsx"
@@ -18,8 +23,7 @@ LOG_FILE = "run_all.log"
 TEMP_DIR = "temp"
 OUTPUT_DOC = os.path.join(TEMP_DIR, OUTPUT_FILENAME)
 
-# === UI CONFIG ===
-st.set_page_config(page_title="JV Agreement Automation Tool", page_icon="🧾")
+# === PAGE HEADER ===
 st.title("🧾 JV Agreement Automation Tool")
 st.write("Hi Marcia! Let's run it! Please upload your files.")
 
@@ -53,8 +57,6 @@ if uploaded_excel and uploaded_docx:
         f.write(uploaded_docx.getbuffer())
     with open(excel_path, "wb") as f:
         f.write(uploaded_excel.getbuffer())
-
-    st.success("✅ Files uploaded!")
 
     # Extract green sheets
     if "green_sheets" not in st.session_state or st.session_state.green_sheets is None:
