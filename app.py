@@ -45,7 +45,7 @@ if uploaded_excel and uploaded_docx:
     with open(excel_path, "wb") as f:
         f.write(uploaded_excel.getbuffer())
 
-    st.success("✅ Files uploaded!")
+#    st.success("✅ Files uploaded!")
 
     # Extract green sheets
     if "green_sheets" not in st.session_state or st.session_state.green_sheets is None:
