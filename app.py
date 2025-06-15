@@ -7,13 +7,8 @@ from get_green_sheets import get_green_sheets
 
 # === UI CONFIG ===
 st.set_page_config(page_title="JV Agreement Automation Tool", page_icon="🧾")
-
-# === SAFE RESET CHECK ===
-if st.session_state.get("reset_requested", False):
-    def _clear_and_rerun():
-        st.session_state.clear()
-        st.experimental_rerun()
-    _clear_and_rerun()
+st.title("🧾 JV Agreement Automation Tool")
+st.write("Hi Marcia! Let's run it! Please upload your files.")
 
 # === CONSTANTS ===
 INPUT_EXCEL = "spreadsheet_input.xlsx"
@@ -23,15 +18,7 @@ LOG_FILE = "run_all.log"
 TEMP_DIR = "temp"
 OUTPUT_DOC = os.path.join(TEMP_DIR, OUTPUT_FILENAME)
 
-# === PAGE HEADER ===
-st.title("🧾 JV Agreement Automation Tool")
-st.write("Hi Marcia! Let's run it! Please upload your files.")
-
 os.makedirs(TEMP_DIR, exist_ok=True)
-
-# === CALLBACK TO REQUEST RESET ===
-def request_reset():
-    st.session_state.reset_requested = True
 
 # === Reset State on Upload ===
 def reset_on_upload(file_key):
@@ -119,4 +106,7 @@ if st.session_state.get("generated"):
             with open(LOG_FILE, "rb") as f:
                 st.download_button("📝 Log", f, file_name="run_all.log")
     with col3:
-        st.button("🔄 Start Another JV", on_click=request_reset)
+        if st.button("🔄 Start Another JV"):
+            st.session_state.clear()
+            st.write("✅ Session reset. Please refresh the page to start another JV.")
+            st.stop()
