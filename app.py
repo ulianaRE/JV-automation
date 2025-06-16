@@ -15,16 +15,6 @@ OUTPUT_DOC = os.path.join(TEMP_DIR, OUTPUT_FILENAME)
 
 # === UI CONFIG ===
 st.set_page_config(page_title="JV Agreement Automation Tool", page_icon="🧾")
-
-# === BACKGROUND COLOR ===
-st.markdown("""
-    <style>
-    .stApp {
-        background-color: #4e342e;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
 st.title("🧾 JV Agreement Automation Tool")
 st.write("Hi Marcia! Let's run it! Please upload your files.")
 
