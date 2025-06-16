@@ -3,11 +3,13 @@ import subprocess
 import sys
 import os
 import shutil
+import requests
 from get_green_sheets import get_green_sheets
 
 # === CONSTANTS ===
 INPUT_EXCEL = "spreadsheet_input.xlsx"
 TEMPLATE_DOCX = "template.docx"
+TEMPLATE_GITHUB_URL = "https://raw.githubusercontent.com/ulianaRE/JV-automation/main/template.docx"
 OUTPUT_FILENAME = "filled_agreement.docx"
 LOG_FILE = "run_all.log"
 TEMP_DIR = "temp"
@@ -15,8 +17,6 @@ OUTPUT_DOC = os.path.join(TEMP_DIR, OUTPUT_FILENAME)
 
 # === UI CONFIG ===
 st.set_page_config(page_title="JV Agreement Automation Tool", page_icon="🧾")
-
-# === BACKGROUND COLOR ===
 st.markdown("""
     <style>
     .stApp {
@@ -24,11 +24,19 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-
 st.title("🧾 JV Agreement Automation Tool")
-st.write("Hi Marcia! Let's run it! Please upload your files.")
+st.write("Hi Marcia! Let's run it! Please upload your spreadsheet.")
 
 os.makedirs(TEMP_DIR, exist_ok=True)
+
+# === Download Template ===
+def download_template():
+    response = requests.get(TEMPLATE_GITHUB_URL)
+    response.raise_for_status()
+    with open(TEMPLATE_DOCX, "wb") as f:
+        f.write(response.content)
+
+download_template()
 
 # === Reset State on Upload ===
 def reset_on_upload(file_key):
@@ -38,24 +46,15 @@ def reset_on_upload(file_key):
         st.session_state.selected_sheet = None
         st.session_state.ready_to_generate = False
 
-# === FILE UPLOADS ===
-st.file_uploader("Upload JV Agreement Template (.docx)", type="docx", key="docx", on_change=lambda: reset_on_upload("docx"))
+# === FILE UPLOADS (Excel Only) ===
 st.file_uploader("Upload Excel (.xlsx)", type="xlsx", key="excel", on_change=lambda: reset_on_upload("excel"))
-
-uploaded_docx = st.session_state.get("docx")
 uploaded_excel = st.session_state.get("excel")
 
-if uploaded_excel and uploaded_docx:
-    # Save files
+if uploaded_excel:
     excel_path = os.path.join(TEMP_DIR, uploaded_excel.name)
-    docx_path = os.path.join(TEMP_DIR, uploaded_docx.name)
-
-    with open(docx_path, "wb") as f:
-        f.write(uploaded_docx.getbuffer())
     with open(excel_path, "wb") as f:
         f.write(uploaded_excel.getbuffer())
 
-    # Extract green sheets
     if "green_sheets" not in st.session_state or st.session_state.green_sheets is None:
         with st.spinner("🔍 Extracting green-labeled sheets..."):
             st.session_state.green_sheets = get_green_sheets(excel_path)
@@ -80,9 +79,7 @@ if st.session_state.get("ready_to_generate") and not st.session_state.get("gener
     if st.button("🚀 Generate JV Agreement"):
         with st.spinner("🛠️ Generating your JV Agreement... please wait..."):
             try:
-                shutil.move(docx_path, TEMPLATE_DOCX)
                 shutil.move(excel_path, INPUT_EXCEL)
-
                 selected_sheet = st.session_state.selected_sheet
                 result = subprocess.run(
                     [sys.executable, "run_all.py", selected_sheet],
